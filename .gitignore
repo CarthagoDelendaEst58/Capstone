@@ -1,0 +1,7 @@
+*.env
+*.o
+.vscode/*
+*.a
+*.exe
+cc
+sensor
