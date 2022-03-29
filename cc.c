@@ -9,10 +9,11 @@ void handle_request(char * req, int connfd) {
     char resp[MAXBUF];
     int code = extract_code(req);
     if (code == DEFINESENSOR) {
-        sensors_accepted++;
-        sprintf(resp, "%d", PORT+(sensors_accepted%MAXSENSORS));
-        printf("%s\n", resp);
-        write(connfd, resp, MAXBUF);
+        // sensors_accepted++;
+        // sprintf(resp, "%d", PORT+(sensors_accepted%MAXSENSORS));
+        // printf("%s\n", resp);
+        // write(connfd, resp, MAXBUF);
+        printf("Sensor Accepted");
     }
 }
 

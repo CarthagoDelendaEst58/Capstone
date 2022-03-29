@@ -19,6 +19,10 @@ void parse_argv(int argc, char* argv[]) {
             fov[1] = atoi(strtok(NULL, ","));
             i += 2;
         }
+        else if (!strcmp(argv[i], "-p") && i<(argc-1)) {
+            port = atoi(argv[i+1]);
+            i += 2;
+        }
         else {
             i++;
         }
@@ -37,16 +41,16 @@ int announce_existence(int sockfd, struct sockaddr_in serveraddress) {
 
     write(sockfd, buf, MAXBUF);
     
-    bzero(buf, MAXBUF);
-    read(sockfd, buf, MAXBUF);
+    // bzero(buf, MAXBUF);
+    // read(sockfd, buf, MAXBUF);
 
-    int port_res;
-    if (!(port_res = atoi(buf))) {
-        printf("port not resolved\n");
-        exit(0);
-    }
+    // int port_res;
+    // if (!(port_res = atoi(buf))) {
+    //     printf("port not resolved\n");
+    //     exit(0);
+    // }
 
-    port = port_res;
+    // port = port_res;
     
     close(sockfd);
 
