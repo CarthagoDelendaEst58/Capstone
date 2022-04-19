@@ -6,6 +6,10 @@ int port;
 
 int status = INIT;
 
+// Parses the command line options
+// -i : Sensor ID
+// -f : Sensor fov. Values are delimited by ','
+// -p : Sensor port
 void parse_argv(int argc, char* argv[]) {
     int arg_res = 0;
     int i = 0;
@@ -29,6 +33,8 @@ void parse_argv(int argc, char* argv[]) {
     }
 }
 
+// Announces to the server that this sensor exists
+// Gives the server this sensor's ID and FOV
 int announce_existence(int sockfd, struct sockaddr_in serveraddress) {
     char buf[MAXBUF];
     bzero(buf, MAXBUF);
@@ -41,28 +47,19 @@ int announce_existence(int sockfd, struct sockaddr_in serveraddress) {
 
     write(sockfd, buf, MAXBUF);
     
-    // bzero(buf, MAXBUF);
-    // read(sockfd, buf, MAXBUF);
-
-    // int port_res;
-    // if (!(port_res = atoi(buf))) {
-    //     printf("port not resolved\n");
-    //     exit(0);
-    // }
-
-    // port = port_res;
-    
     close(sockfd);
 
     return 0;
 }
 
+// Sends the server the sensor's current status code
 void respond_status(int connfd) {
     char resp[MAXBUF];
     sprintf(resp, "%d", status);
     write(connfd, resp, MAXBUF);
 }
 
+// Determines request type and responds accordingly
 void handle_request(char* req, int connfd) {
     int code = extract_code(req);
     if (code == GETSTATUS) {
@@ -70,11 +67,13 @@ void handle_request(char* req, int connfd) {
     }
 }
 
+// Initialize sensor and begin communication with CC server
 int main(int argc, char* argv[]) {
     int sockfd1, sockfd2, connfd, clientlen, serverlen;
     struct sockaddr_in serveraddress, clientaddress;
     char buf[MAXBUF];
     
+    // Initialize
     bzero(sensor_id, ID_LEN);
     parse_argv(argc, argv);
     
@@ -88,8 +87,10 @@ int main(int argc, char* argv[]) {
     serveraddress.sin_addr.s_addr = inet_addr(SERVERADDRESS);
     serveraddress.sin_port = htons(PORT);
 
+    // Ping server
     announce_existence(sockfd1, serveraddress);
 
+    // Initialize socket for listening
     if ((sockfd2 = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         printf("error creating socket: %d\n", errno);
         exit(0);
@@ -115,6 +116,7 @@ int main(int argc, char* argv[]) {
 
     status = AVAIL;
 
+    // Main communication loop
     serverlen = sizeof(serveraddress);
     while (connfd = accept(sockfd2, (struct sockaddr*)&serveraddress, &serverlen)) {
         printf("client accepted\n");

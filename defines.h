@@ -34,6 +34,7 @@ void read_request(int connfd, char* dest) {
     memcpy(dest, buf, MAXBUF);
 }
 
+// Returns an integer representing the code that the given request begins with
 int extract_code(char* req) {
     char * tok = strtok(req, " ");
     return atoi(tok);
